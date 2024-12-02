@@ -16,9 +16,9 @@ func Day2(s []string) {
 			safeCount++
 		} else {
 			for i := range len(nums) {
-				permT := make([]string, len(nums))
-				copy(permT, nums)
-				permT = append(permT[:i], permT[i+1:]...)
+				permT := make([]string, i, len(nums)-1)
+				copy(permT, nums[:i])
+				permT = append(permT, nums[i+1:]...)
 				if validSeq(permT) {
 					advSafeCount++
 					break
