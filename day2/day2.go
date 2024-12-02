@@ -34,14 +34,30 @@ func Day2(s []string) {
 }
 
 func validSeq(nums []string) bool {
-	diffMap := map[int]int{1: 0, 2: 0, 3: 0}
-	negDiffMap := map[int]int{-1: 0, -2: 0, -3: 0}
+	l1, _ := strconv.Atoi(nums[0])
+	l2, _ := strconv.Atoi(nums[1])
+	dir := l1 < l2
 	for i := range len(nums) - 1 {
-		n, _ := strconv.Atoi(nums[i])
-		j, _ := strconv.Atoi(nums[i+1])
-		diffMap[n-j]++
-		negDiffMap[n-j]++
-	}
+		l1, _ := strconv.Atoi(nums[i])
+		l2, _ := strconv.Atoi(nums[i+1])
 
-	return len(diffMap) == 3 || len(negDiffMap) == 3
+		validDiff := l1-l2 >= -3 && l1-l2 <= 3
+		if l1 == l2 || l1 < l2 != dir || !validDiff {
+			return false
+		}
+	}
+	return true
 }
+
+//func validSeq(nums []string) bool {
+//	diffMap := map[int]int{1: 0, 2: 0, 3: 0}
+//	negDiffMap := map[int]int{-1: 0, -2: 0, -3: 0}
+//	for i := range len(nums) - 1 {
+//		n, _ := strconv.Atoi(nums[i])
+//		j, _ := strconv.Atoi(nums[i+1])
+//		diffMap[n-j]++
+//		negDiffMap[n-j]++
+//	}
+//
+//	return len(diffMap) == 3 || len(negDiffMap) == 3
+//}
