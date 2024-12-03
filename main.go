@@ -3,37 +3,38 @@ package main
 import (
 	"adv/day1"
 	"adv/day2"
+	"adv/day3"
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"time"
 )
 
 func main() {
-	// fmt.Println("Day 1 test input:")
-	// day1.Day1(ReadTestInputStr("day1"))
-
 	fmt.Println("Day 1 solution:")
 	start := time.Now()
-	day1.Day1(ReadMainInputStr("day1"))
-	fmt.Println(time.Since(start))
+	day1.Day1(ReadInputLnStr("./day1/input.txt"))
+	fmt.Println(time.Since(start).Seconds())
 
 	fmt.Println("----------------------------------------------------")
 
-	// fmt.Println("Day 2 test input:")
-	// day2.Day2(ReadTestInputStr("day2"))
-
 	fmt.Println("Day 2 solution:")
 	start = time.Now()
-	day2.Day2(ReadMainInputStr("day2"))
-	fmt.Println(time.Since(start))
+	day2.Day2(ReadInputLnStr("./day2/input.txt"))
+	fmt.Println(time.Since(start).Seconds())
+
+	fmt.Println("----------------------------------------------------")
+
+	fmt.Println("Day 3 solution:")
+	start = time.Now()
+	day3.Day3(ReadInputBlockByte("./day3/input.txt"))
+	fmt.Println(time.Since(start).Seconds())
 }
 
-func ReadTestInputStr(dir string) []string {
+func ReadInputLnStr(dir string) []string {
 	res := []string{}
 
-	file, err := os.Open(filepath.Join(dir, "test.txt"))
+	file, err := os.Open(dir)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -49,59 +50,11 @@ func ReadTestInputStr(dir string) []string {
 	return res
 }
 
-func ReadMainInputStr(dir string) []string {
-	res := []string{}
-
-	file, err := os.Open(filepath.Join(dir, "main.txt"))
+func ReadInputBlockByte(dir string) []byte {
+	data, err := os.ReadFile(dir)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		res = append(res, scanner.Text())
-	}
-
-	return res
-}
-
-func ReadTestInputByte(dir string) [][]byte {
-	res := [][]byte{}
-
-	file, err := os.Open(filepath.Join(dir, "test.txt"))
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		res = append(res, scanner.Bytes())
-	}
-
-	return res
-}
-
-func ReadMainInputByte(dir string) [][]byte {
-	res := [][]byte{}
-
-	file, err := os.Open(filepath.Join(dir, "main.txt"))
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		res = append(res, scanner.Bytes())
-	}
-
-	return res
+	return data
 }
