@@ -4,6 +4,7 @@ import (
 	"adv/day1"
 	"adv/day2"
 	"adv/day3"
+	"adv/day4"
 	"bufio"
 	"fmt"
 	"os"
@@ -28,6 +29,13 @@ func main() {
 	fmt.Println("Day 3 solution:")
 	start = time.Now()
 	day3.Day3(ReadInputBlockByte("./day3/input.txt"))
+	fmt.Println(time.Since(start).Seconds())
+
+	fmt.Println("-----------------------------------------------------")
+
+	fmt.Println("Day 4 solution:")
+	start = time.Now()
+	day4.Day4(ReadInputLnStr("./day4/input.txt"))
 	fmt.Println(time.Since(start).Seconds())
 }
 
