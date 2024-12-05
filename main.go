@@ -5,38 +5,47 @@ import (
 	"adv/day2"
 	"adv/day3"
 	"adv/day4"
+	"adv/day5"
+	"adv/utils"
 	"bufio"
 	"fmt"
 	"os"
-	"time"
 )
 
 func main() {
-	fmt.Println("Day 1 solution:")
-	start := time.Now()
-	day1.Day1(ReadInputLnStr("./day1/input.txt"))
-	fmt.Println(time.Since(start).Seconds())
+	t := &utils.Timer{}
 
+	fmt.Println("Day 1 solution:")
+	t.StartTimer()
+	day1.Day1(ReadInputLnStr("./day1/input.txt"))
+	t.PrintDuration()
 	fmt.Println("----------------------------------------------------")
 
 	fmt.Println("Day 2 solution:")
-	start = time.Now()
+	t.StartTimer()
 	day2.Day2(ReadInputLnStr("./day2/input.txt"))
-	fmt.Println(time.Since(start).Seconds())
+	t.PrintDuration()
 
 	fmt.Println("----------------------------------------------------")
 
 	fmt.Println("Day 3 solution:")
-	start = time.Now()
+	t.StartTimer()
 	day3.Day3(ReadInputBlockByte("./day3/input.txt"))
-	fmt.Println(time.Since(start).Seconds())
+	t.PrintDuration()
 
 	fmt.Println("-----------------------------------------------------")
 
 	fmt.Println("Day 4 solution:")
-	start = time.Now()
+	t.StartTimer()
 	day4.Day4(ReadInputLnStr("./day4/input.txt"))
-	fmt.Println(time.Since(start).Seconds())
+	t.PrintDuration()
+
+	fmt.Println("-----------------------------------------------------")
+
+	fmt.Println("Day 5 solution:")
+	t.StartTimer()
+	day5.Day5(ReadInputBlockByte("./day5/input.txt"))
+	t.PrintDuration()
 }
 
 func ReadInputLnStr(dir string) []string {
