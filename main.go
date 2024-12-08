@@ -12,56 +12,73 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 )
+
+type day struct {
+	name string
+	fn   func()
+}
+
+var solutions []day
+
+func init() {
+	solutions = []day{
+		{"Day 1 solution:", func() {
+			day1.Day1(ReadInputLnStr("./day1/input.txt"))
+		}},
+		{"Day 2 solution:", func() {
+			day2.Day2(ReadInputLnStr("./day2/input.txt"))
+		}},
+		{"Day 3 solution:", func() {
+			day3.Day3(ReadInputBlockByte("./day3/input.txt"))
+		}},
+		{"Day 4 solution:", func() {
+			day4.Day4(ReadInputLnStr("./day4/input.txt"))
+		}},
+		{"Day 5 solution:", func() {
+			day5.Day5(ReadInputBlockByte("./day5/input.txt"))
+		}},
+		{"Day 6 solution:", func() {
+			day6.Day6(ReadInputLineRune("./day6/input.txt"))
+		}},
+		{"Day 8 solution:", func() {
+			day8.Day8(ReadInputLnStr("./day8/input.txt"))
+		}},
+	}
+}
 
 func main() {
 	t := &utils.Timer{}
 
-	fmt.Println("Day 1 solution:")
-	t.StartTimer()
-	day1.Day1(ReadInputLnStr("./day1/input.txt"))
-	t.PrintDuration()
-	fmt.Println("----------------------------------------------------")
+	switch len(os.Args) {
+	case 1:
+		for _, day := range solutions {
+			fmt.Println(day.name)
 
-	fmt.Println("Day 2 solution:")
-	t.StartTimer()
-	day2.Day2(ReadInputLnStr("./day2/input.txt"))
-	t.PrintDuration()
+			t.StartTimer()
+			day.fn()
+			t.PrintDuration()
 
-	fmt.Println("----------------------------------------------------")
+			fmt.Println("----------------------------------------------------")
+		}
+		t.PrintTotalDuration()
+	case 2:
+		idx, err := strconv.Atoi(os.Args[1])
+		if err != nil || idx < 1 || idx > len(solutions) {
+			fmt.Printf("Expected [<int> << range(1, %d)] || Got %s\n", len(solutions), os.Args[1])
+			os.Exit(1)
+		}
 
-	fmt.Println("Day 3 solution:")
-	t.StartTimer()
-	day3.Day3(ReadInputBlockByte("./day3/input.txt"))
-	t.PrintDuration()
+		fmt.Println(solutions[idx-1].name)
 
-	fmt.Println("-----------------------------------------------------")
-
-	fmt.Println("Day 4 solution:")
-	t.StartTimer()
-	day4.Day4(ReadInputLnStr("./day4/input.txt"))
-	t.PrintDuration()
-
-	fmt.Println("-----------------------------------------------------")
-
-	fmt.Println("Day 5 solution:")
-	t.StartTimer()
-	day5.Day5(ReadInputBlockByte("./day5/input.txt"))
-	t.PrintDuration()
-
-	fmt.Println("-----------------------------------------------------")
-
-	fmt.Println("Day 6 solution:")
-	t.StartTimer()
-	day6.Day6(ReadInputLineRune("./day6/input.txt"))
-	t.PrintDuration()
-
-	fmt.Println("-----------------------------------------------------")
-
-	fmt.Println("Day 8 solution;")
-	t.StartTimer()
-	day8.Day8(ReadInputLnStr("./day8/input.txt"))
-	t.PrintDuration()
+		t.StartTimer()
+		solutions[idx-1].fn()
+		t.PrintDuration()
+	default:
+		fmt.Printf("Expected arguments 0 or 1 [<int> <- range(1, %d)] || Got %d arguments\n", len(solutions), len(os.Args)-1)
+		os.Exit(1)
+	}
 }
 
 func ReadInputLnStr(dir string) []string {
