@@ -6,6 +6,8 @@ import (
 	"adv/day3"
 	"adv/day4"
 	"adv/day5"
+	"adv/day6"
+	"adv/day8"
 	"adv/utils"
 	"bufio"
 	"fmt"
@@ -46,6 +48,20 @@ func main() {
 	t.StartTimer()
 	day5.Day5(ReadInputBlockByte("./day5/input.txt"))
 	t.PrintDuration()
+
+	fmt.Println("-----------------------------------------------------")
+
+	fmt.Println("Day 6 solution:")
+	t.StartTimer()
+	day6.Day6(ReadInputLineRune("./day6/input.txt"))
+	t.PrintDuration()
+
+	fmt.Println("-----------------------------------------------------")
+
+	fmt.Println("Day 8 solution;")
+	t.StartTimer()
+	day8.Day8(ReadInputLnStr("./day8/input.txt"))
+	t.PrintDuration()
 }
 
 func ReadInputLnStr(dir string) []string {
@@ -74,4 +90,23 @@ func ReadInputBlockByte(dir string) []byte {
 		os.Exit(1)
 	}
 	return data
+}
+
+func ReadInputLineRune(dir string) [][]rune {
+	res := [][]rune{}
+
+	file, err := os.Open(dir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		res = append(res, []rune(scanner.Text()))
+	}
+
+	return res
 }
