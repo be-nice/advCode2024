@@ -2,17 +2,22 @@ package main
 
 import (
 	"adv/day1"
+	"adv/day10"
+	"adv/day11"
 	"adv/day2"
 	"adv/day3"
 	"adv/day4"
 	"adv/day5"
 	"adv/day6"
+	"adv/day7"
 	"adv/day8"
+	"adv/day9"
 	"adv/utils"
 	"bufio"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type day struct {
@@ -42,8 +47,20 @@ func init() {
 		{"Day 6 solution:", func() {
 			day6.Day6(ReadInputLineRune("./day6/input.txt"))
 		}},
+		{"Day 7 solution:", func() {
+			day7.Day7(ReadEquation("./day7/input.txt"))
+		}},
 		{"Day 8 solution:", func() {
 			day8.Day8(ReadInputLnStr("./day8/input.txt"))
+		}},
+		{"Day 9 solution:", func() {
+			day9.Day9(ReadInputBlockByte("./day9/input.txt"))
+		}},
+		{"Day 10 solution:", func() {
+			day10.Day10(ReadInputLnInt("./day10/input.txt"))
+		}},
+		{"Day 11 solution:", func() {
+			day11.Day11(ReadInputBlockInt("./day11/input.txt"))
 		}},
 	}
 }
@@ -100,6 +117,53 @@ func ReadInputLnStr(dir string) []string {
 	return res
 }
 
+func ReadInputLnInt(dir string) [][]int {
+	res := [][]int{}
+
+	file, err := os.Open(dir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		in := scanner.Bytes()
+		nums := make([]int, len(in))
+		for i, val := range in {
+			nums[i] = int(val - '0')
+		}
+		res = append(res, nums)
+	}
+
+	return res
+}
+
+func ReadInputBlockInt(dir string) []int {
+	var res []int
+
+	file, err := os.Open(dir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	dataStr := scanner.Text()
+	splitData := strings.Fields(dataStr)
+
+	for _, val := range splitData {
+		num, _ := strconv.Atoi(val)
+		res = append(res, num)
+	}
+
+	return res
+}
+
 func ReadInputBlockByte(dir string) []byte {
 	data, err := os.ReadFile(dir)
 	if err != nil {
@@ -123,6 +187,36 @@ func ReadInputLineRune(dir string) [][]rune {
 
 	for scanner.Scan() {
 		res = append(res, []rune(scanner.Text()))
+	}
+
+	return res
+}
+
+func ReadEquation(dir string) []day7.Equation {
+	var res []day7.Equation
+
+	file, err := os.Open(dir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		lineSplit := strings.Split(line, ":")
+		result, _ := strconv.Atoi(lineSplit[0])
+		var listOfNums []int
+		listOfNumsAsSting := strings.Split(strings.TrimSpace(lineSplit[1]), " ")
+
+		for i := range listOfNumsAsSting {
+			num, _ := strconv.Atoi(listOfNumsAsSting[i])
+			listOfNums = append(listOfNums, num)
+		}
+
+		res = append(res, day7.Equation{Res: result, Calibration: listOfNums})
 	}
 
 	return res
