@@ -2,7 +2,6 @@ package day11
 
 import (
 	"fmt"
-	"strconv"
 )
 
 func Day11(n []int) {
@@ -26,15 +25,30 @@ func Day11(n []int) {
 		for stone, val := range stones {
 			if stone == 0 {
 				newStones[1] += val
-			} else if len(strconv.Itoa(stone))%2 == 0 {
-				full := strconv.Itoa(stone)
-				mid := len(full) / 2
-				left, _ := strconv.Atoi(full[:mid])
-				right, _ := strconv.Atoi(full[mid:])
-				newStones[left] += val
-				newStones[right] += val
 			} else {
-				newStones[stone*2024] += val
+				digits := 0
+				temp := stone
+
+				for temp > 0 {
+					temp /= 10
+					digits++
+				}
+
+				if digits%2 == 0 {
+					halfDigits := digits / 2
+					divisor := 1
+
+					for range halfDigits {
+						divisor *= 10
+					}
+
+					left := stone / divisor
+					right := stone % divisor
+					newStones[left] += val
+					newStones[right] += val
+				} else {
+					newStones[stone*2024] += val
+				}
 			}
 		}
 
