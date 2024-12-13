@@ -6,6 +6,13 @@ type point struct {
 	x, y int
 }
 
+var directions = []point{
+	{-1, 0},
+	{1, 0},
+	{0, -1},
+	{0, 1},
+}
+
 func Day10(n [][]int) {
 	part1, part2 := findHeads(n)
 
@@ -18,20 +25,15 @@ func Day10(n [][]int) {
 func findNext(input [][]int, curr point) []point {
 	validStep := []point{}
 
-	if curr.x > 0 && input[curr.y][curr.x-1] == input[curr.y][curr.x]+1 {
-		validStep = append(validStep, point{curr.x - 1, curr.y})
-	}
+	for _, dir := range directions {
+		newX := curr.x + dir.x
+		newY := curr.y + dir.y
 
-	if curr.x < len(input[0])-1 && input[curr.y][curr.x+1] == input[curr.y][curr.x]+1 {
-		validStep = append(validStep, point{curr.x + 1, curr.y})
-	}
-
-	if curr.y > 0 && input[curr.y-1][curr.x] == input[curr.y][curr.x]+1 {
-		validStep = append(validStep, point{curr.x, curr.y - 1})
-	}
-
-	if curr.y < len(input)-1 && input[curr.y+1][curr.x] == input[curr.y][curr.x]+1 {
-		validStep = append(validStep, point{curr.x, curr.y + 1})
+		if newX >= 0 && newX < len(input[0]) && newY >= 0 && newY < len(input) {
+			if input[newY][newX] == input[curr.y][curr.x]+1 {
+				validStep = append(validStep, point{newX, newY})
+			}
+		}
 	}
 
 	return validStep
