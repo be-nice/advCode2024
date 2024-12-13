@@ -4,6 +4,8 @@ import (
 	"adv/day1"
 	"adv/day10"
 	"adv/day11"
+	"adv/day12"
+	"adv/day13"
 	"adv/day2"
 	"adv/day3"
 	"adv/day4"
@@ -54,13 +56,19 @@ func init() {
 			day8.Day8(ReadInputLnStr("./day8/input.txt"))
 		}},
 		{"Day 9 solution:", func() {
-			day9.Day9(ReadInputBlockByte("./day9/input.txt"))
+			day9.Day9(ReadInputBlockByte("./day9/test.txt"))
 		}},
 		{"Day 10 solution:", func() {
 			day10.Day10(ReadInputLnInt("./day10/input.txt"))
 		}},
 		{"Day 11 solution:", func() {
 			day11.Day11(ReadInputBlockInt("./day11/input.txt"))
+		}},
+		{"Day 12 solution:", func() {
+			day12.Day12(ReadInputLnStr("./day12/input.txt"))
+		}},
+		{"Day 13 solution:", func() {
+			day13.Day13(ReadInputLnStr("./day13/input.txt"))
 		}},
 	}
 }
@@ -112,6 +120,25 @@ func ReadInputLnStr(dir string) []string {
 
 	for scanner.Scan() {
 		res = append(res, scanner.Text())
+	}
+
+	return res
+}
+
+func ReadInputLnByte(dir string) [][]byte {
+	res := [][]byte{}
+
+	file, err := os.Open(dir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		res = append(res, scanner.Bytes())
 	}
 
 	return res
