@@ -10,15 +10,16 @@ func Day2(s []string) {
 	safeCount := 0
 	advSafeCount := 0
 
-	for _, row := range s {
-		nums := strings.Fields(row)
-		if validSeq(nums) {
+	nums := parseInt(s)
+
+	for _, row := range nums {
+		if validSeq(row) {
 			safeCount++
 		} else {
-			for i := range len(nums) {
-				permT := make([]string, i, len(nums)-1)
-				copy(permT, nums[:i])
-				permT = append(permT, nums[i+1:]...)
+			for i := range len(row) {
+				permT := make([]int, i, len(row)-1)
+				copy(permT, row[:i])
+				permT = append(permT, row[i+1:]...)
 				if validSeq(permT) {
 					advSafeCount++
 					break
@@ -33,13 +34,31 @@ func Day2(s []string) {
 	fmt.Println(safeCount + advSafeCount)
 }
 
-func validSeq(nums []string) bool {
-	l1, _ := strconv.Atoi(nums[0])
-	l2, _ := strconv.Atoi(nums[1])
+func parseInt(s []string) [][]int {
+	res := make([][]int, 0, len(s))
+
+	for _, line := range s {
+		nums := strings.Fields(line)
+		numArr := make([]int, 0, len(nums))
+
+		for _, val := range nums {
+			num, _ := strconv.Atoi(val)
+			numArr = append(numArr, num)
+		}
+
+		res = append(res, numArr)
+	}
+
+	return res
+}
+
+func validSeq(nums []int) bool {
+	l1 := nums[0]
+	l2 := nums[1]
 	dir := l1 < l2
 	for i := range len(nums) - 1 {
-		l1, _ := strconv.Atoi(nums[i])
-		l2, _ := strconv.Atoi(nums[i+1])
+		l1 := nums[i]
+		l2 := nums[i+1]
 
 		validDiff := l1-l2 >= -3 && l1-l2 <= 3
 		if l1 == l2 || l1 < l2 != dir || !validDiff {
