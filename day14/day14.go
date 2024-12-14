@@ -60,14 +60,14 @@ func Day14(s []string) {
 
 	robots := parse(s)
 
-	for _, r := range robots {
-		r.calcNewPos(SimulateSeconds)
-		q.getQuadrant(r.pX, r.pY)
+	for _, robot := range robots {
+		robot.calcNewPos(SimulateSeconds)
+		q.getQuadrant(robot.pX, robot.pY)
 	}
 
 	// Matrix printing is handled in Part 2
 	// calling it first leaves numeric output as last lines
-	p2 := part2(parse(s))
+	p2 := part2(robots)
 
 	fmt.Println("Part 1")
 	fmt.Println(q.q1 * q.q2 * q.q3 * q.q4)
@@ -76,7 +76,9 @@ func Day14(s []string) {
 }
 
 func part2(robots []*robot) int {
-	for i := 1; i < 10000; i++ {
+	// Reusing robot locations from part 1
+	// Starting from SimulateSeconds + 1 offset to have correct part 2 count
+	for i := SimulateSeconds + 1; i < 10000; i++ {
 		q := &quadrant{}
 
 		for _, r := range robots {
@@ -165,6 +167,7 @@ func printMatrix(matrix [][]rune) {
 
 func parse(s []string) []*robot {
 	robots := make([]*robot, 0, len(s))
+
 	for _, line := range s {
 		r := &robot{}
 		tokens := strings.Fields(line)
