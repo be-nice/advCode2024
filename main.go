@@ -6,6 +6,7 @@ import (
 	"adv/day11"
 	"adv/day12"
 	"adv/day13"
+	"adv/day14"
 	"adv/day2"
 	"adv/day3"
 	"adv/day4"
@@ -56,7 +57,7 @@ func init() {
 			day8.Day8(ReadInputLnStr("./day8/input.txt"))
 		}},
 		{"Day 9 solution:", func() {
-			day9.Day9(ReadInputBlockByte("./day9/test.txt"))
+			day9.Day9(ReadInputBlockString("./day9/input.txt"))
 		}},
 		{"Day 10 solution:", func() {
 			day10.Day10(ReadInputLnInt("./day10/input.txt"))
@@ -69,6 +70,9 @@ func init() {
 		}},
 		{"Day 13 solution:", func() {
 			day13.Day13(ReadInputLnStr("./day13/input.txt"))
+		}},
+		{"Day 14 solution:", func() {
+			day14.Day14(ReadInputLnStr("./day14/input.txt"))
 		}},
 	}
 }
@@ -198,6 +202,15 @@ func ReadInputBlockByte(dir string) []byte {
 		os.Exit(1)
 	}
 	return data
+}
+
+func ReadInputBlockString(dir string) string {
+	data, err := os.ReadFile(dir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	return string(data)
 }
 
 func ReadInputLineRune(dir string) [][]rune {

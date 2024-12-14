@@ -65,8 +65,9 @@ func solve(data []clawMachine, part2 bool) int {
 		b := float64(d*x1-c*y1) / float64(x1*y2-y1*x2)
 
 		if a == float64(int(a)) && b == float64(int(b)) {
-			tokens += int(3*int(a) + int(b))
+			tokens += 3*int(a) + int(b)
 		}
+		fmt.Println(a, b)
 	}
 
 	return tokens
