@@ -42,32 +42,27 @@ func (q *quadrant) getQuadrant(x, y int) {
 	}
 }
 
+func (r *robot) calcNewPos(offset int) {
+	r.pX = (r.pX + r.vX*offset) % MaxWidth
+	r.pY = (r.pY + r.vY*offset) % MaxHeight
+
+	if r.pX < 0 {
+		r.pX += MaxWidth
+	}
+
+	if r.pY < 0 {
+		r.pY += MaxHeight
+	}
+}
+
 func Day14(s []string) {
 	q := &quadrant{}
 
-	for _, line := range s {
-		tokens := strings.Fields(line)
+	robots := parse(s)
 
-		p := strings.Split(strings.TrimPrefix(tokens[0], "p="), ",")
-		v := strings.Split(strings.TrimPrefix(tokens[1], "v="), ",")
-
-		pX, _ := strconv.Atoi(p[0])
-		pY, _ := strconv.Atoi(p[1])
-		vX, _ := strconv.Atoi(v[0])
-		vY, _ := strconv.Atoi(v[1])
-
-		pXn := (pX + vX*SimulateSeconds) % MaxWidth
-		pYn := (pY + vY*SimulateSeconds) % MaxHeight
-
-		if pXn < 0 {
-			pXn += 101
-		}
-
-		if pYn < 0 {
-			pYn += 103
-		}
-
-		q.getQuadrant(pXn, pYn)
+	for _, r := range robots {
+		r.calcNewPos(SimulateSeconds)
+		q.getQuadrant(r.pX, r.pY)
 	}
 
 	// Matrix printing is handled in Part 2
@@ -85,16 +80,7 @@ func part2(robots []*robot) int {
 		q := &quadrant{}
 
 		for _, r := range robots {
-			r.pX = (r.pX + r.vX) % MaxWidth
-			r.pY = (r.pY + r.vY) % MaxHeight
-
-			if r.pX < 0 {
-				r.pX += 101
-			}
-
-			if r.pY < 0 {
-				r.pY += 103
-			}
+			r.calcNewPos(1)
 			q.getQuadrant(r.pX, r.pY)
 		}
 
