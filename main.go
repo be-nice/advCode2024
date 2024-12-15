@@ -7,6 +7,7 @@ import (
 	"adv/day12"
 	"adv/day13"
 	"adv/day14"
+	"adv/day15"
 	"adv/day2"
 	"adv/day3"
 	"adv/day4"
@@ -73,6 +74,9 @@ func init() {
 		}},
 		{"Day 14 solution:", func() {
 			day14.Day14(ReadInputLnStr("./day14/input.txt"))
+		}},
+		{"Day 15 solution:", func() {
+			day15.Day15(ReadInputBlockString("./day15/input.txt"))
 		}},
 	}
 }
