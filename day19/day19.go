@@ -52,7 +52,6 @@ func parse(s string) ([]string, []string) {
 	split := strings.Split(s, "\n\n")
 
 	lines := strings.Split(strings.TrimSpace(split[1]), "\n")
-	partials := strings.Split(split[0], ", ")
 
-	return lines, partials
+	return lines, strings.Split(split[0], ", ")
 }

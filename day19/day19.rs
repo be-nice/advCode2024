@@ -6,7 +6,7 @@ use std::time::Instant;
 fn main() {
     let start = Instant::now();
     let filename = "input.txt";
-    match read_input_from_file(filename) {
+    match read_file(filename) {
         Ok(input) => {
             let (partials, patterns) = parse(&input);
             let mut cache: HashMap<String, i64> = HashMap::new();
@@ -64,10 +64,9 @@ fn parse(input: &str) -> (Vec<String>, Vec<String>) {
     (partials, patterns)
 }
 
-fn read_input_from_file(filename: &str) -> io::Result<String> {
+fn read_file(filename: &str) -> io::Result<String> {
     let mut file = fs::File::open(filename)?;
     let mut content = String::new();
     file.read_to_string(&mut content)?;
     Ok(content)
 }
-
