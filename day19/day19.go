@@ -28,14 +28,14 @@ func Day19(s string) {
 	fmt.Println(perms)
 }
 
-func dp(partials map[string]struct{}, line string) int {
+func dp(partials []string, line string) int {
 	if _, ok := cache[line]; !ok {
 		if len(line) == 0 {
 			return 1
 		} else {
 			res := 0
 
-			for k := range partials {
+			for _, k := range partials {
 				if strings.HasPrefix(line, k) {
 					res += dp(partials, line[len(k):])
 				}
@@ -48,15 +48,11 @@ func dp(partials map[string]struct{}, line string) int {
 	return cache[line]
 }
 
-func parse(s string) ([]string, map[string]struct{}) {
+func parse(s string) ([]string, []string) {
 	split := strings.Split(s, "\n\n")
 
 	lines := strings.Split(strings.TrimSpace(split[1]), "\n")
-	partials := make(map[string]struct{})
-
-	for _, val := range strings.Split(split[0], ", ") {
-		partials[val] = struct{}{}
-	}
+	partials := strings.Split(split[0], ", ")
 
 	return lines, partials
 }
