@@ -98,13 +98,9 @@ func nMod(curr, val int) int {
 
 func dijkstra(grid [][]rune, s Node) (map[Node]int, map[Node][]Node) {
 	cost := map[Node]int{}
-
 	marked := map[Node]bool{}
-
 	par := map[Node][]Node{}
-
 	cost[s] = 0
-
 	pq := make(PriorityQueue, 0)
 
 	heap.Init(&pq)
@@ -155,7 +151,6 @@ func dijkstra(grid [][]rune, s Node) (map[Node]int, map[Node][]Node) {
 
 		for _, val := range adj {
 			vCost, exists := cost[val.Node]
-
 			newCost := val.cost
 
 			if !exists || newCost <= vCost {
