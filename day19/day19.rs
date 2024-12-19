@@ -24,8 +24,8 @@ fn main() {
                 perms += temp;
             }
 
-            println!("Part 1\n{}", res);
-            println!("Part 2 \n{}", perms);
+            println!("Part 1\n{res}");
+            println!("Part 2 \n{perms}");
             println!("{:?}", start.elapsed())
         }
         Err(e) => eprintln!("Error reading file: {}", e),
