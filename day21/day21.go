@@ -30,6 +30,13 @@ var dirs = []Point{
 	{0, -1},
 }
 
+var clickMaping = map[int]byte{
+	0: '<',
+	1: '^',
+	2: '>',
+	3: 'v',
+}
+
 type Point struct {
 	x, y int
 }
@@ -183,8 +190,7 @@ func findShortestPaths(keypad [][]byte, from, to byte) [][]byte {
 		for i, dir := range dirs {
 			nx, ny := node.point.x+dir.x, node.point.y+dir.y
 			if nx >= 0 && ny >= 0 && ny < len(keypad) && nx < len(keypad[ny]) && dist[ny][nx] < dist[node.point.y][node.point.x] {
-				ch := map[int]byte{0: '<', 1: '^', 2: '>', 3: 'v'}[i]
-				newPath := append([]byte{ch}, node.path...)
+				newPath := append([]byte{clickMaping[i]}, node.path...)
 				stack = append(stack, struct {
 					point Point
 					path  []byte
