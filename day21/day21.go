@@ -6,7 +6,10 @@ import (
 	"math"
 )
 
-var cache = make(map[string]int)
+var (
+	seqCache  = make(map[string]int)
+	pathCache = make(map[string][][]byte)
+)
 
 var ePad = [][]byte{
 	{'7', '8', '9'},
@@ -34,7 +37,6 @@ type Point struct {
 type PriorityQueueItem struct {
 	point    Point
 	priority int
-	index    int
 }
 
 type PriorityQueue []*PriorityQueueItem
@@ -49,8 +51,6 @@ func (pq PriorityQueue) Less(i, j int) bool {
 
 func (pq PriorityQueue) Swap(i, j int) {
 	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].index = i
-	pq[j].index = j
 }
 
 func (pq *PriorityQueue) Push(x interface{}) {
@@ -59,10 +59,9 @@ func (pq *PriorityQueue) Push(x interface{}) {
 }
 
 func (pq *PriorityQueue) Pop() interface{} {
-	n := len(*pq)
-	item := (*pq)[n-1]
-	*pq = (*pq)[:n-1]
-	item.index = -1
+	n := len(*pq) - 1
+	item := (*pq)[n]
+	*pq = (*pq)[:n]
 
 	return item
 }
@@ -81,7 +80,6 @@ func Day21(b [][]byte) {
 			len := findShortestSequence(val, depth, true, cursors)
 
 			n := 0
-
 			for _, val := range val[:3] {
 				n = n*10 + int(val-'0')
 			}
@@ -99,6 +97,12 @@ func Day21(b [][]byte) {
 }
 
 func findShortestPaths(keypad [][]byte, from, to byte) [][]byte {
+	cacheKey := fmt.Sprintf("%c-%c", from, to)
+
+	if cached, exists := pathCache[cacheKey]; exists {
+		return cached
+	}
+
 	var start, end Point
 
 	for y, row := range keypad {
@@ -118,9 +122,10 @@ func findShortestPaths(keypad [][]byte, from, to byte) [][]byte {
 	}
 
 	dist := make([][]int, len(keypad))
+	visited := make([][]bool, len(keypad))
 	for i := range dist {
 		dist[i] = make([]int, len(keypad[i]))
-
+		visited[i] = make([]bool, len(keypad[i]))
 		for j := range dist[i] {
 			dist[i][j] = math.MaxInt
 		}
@@ -134,6 +139,11 @@ func findShortestPaths(keypad [][]byte, from, to byte) [][]byte {
 
 	for pq.Len() > 0 {
 		current := heap.Pop(pq).(*PriorityQueueItem).point
+
+		if visited[current.y][current.x] {
+			continue
+		}
+		visited[current.y][current.x] = true
 
 		for _, dir := range dirs {
 			nx, ny := current.x+dir.x, current.y+dir.y
@@ -166,13 +176,12 @@ func findShortestPaths(keypad [][]byte, from, to byte) [][]byte {
 		stack = stack[:n]
 
 		if node.point == start {
-			paths = append(paths, node.path)
+			paths = append(paths, append([]byte(nil), node.path...))
 			continue
 		}
 
 		for i, dir := range dirs {
 			nx, ny := node.point.x+dir.x, node.point.y+dir.y
-
 			if nx >= 0 && ny >= 0 && ny < len(keypad) && nx < len(keypad[ny]) && dist[ny][nx] < dist[node.point.y][node.point.x] {
 				ch := map[int]byte{0: '<', 1: '^', 2: '>', 3: 'v'}[i]
 				newPath := append([]byte{ch}, node.path...)
@@ -184,20 +193,21 @@ func findShortestPaths(keypad [][]byte, from, to byte) [][]byte {
 		}
 	}
 
+	pathCache[cacheKey] = paths
+
 	return paths
 }
 
 func findShortestSequence(s []byte, depth int, highest bool, cursors []byte) int {
-	cacheKey := fmt.Sprintf("%s:%d:%ch", string(s), depth, cursors[depth])
+	cacheKey := fmt.Sprintf("%s:%d:%c", string(s), depth, cursors[depth])
 
-	if val, found := cache[cacheKey]; found {
+	if val, found := seqCache[cacheKey]; found {
 		return val
 	}
 
 	result := 0
 	for _, ch := range s {
-		paths := [][]byte{}
-
+		var paths [][]byte
 		if highest {
 			paths = findShortestPaths(ePad, cursors[depth], ch)
 		} else {
@@ -230,7 +240,7 @@ func findShortestSequence(s []byte, depth int, highest bool, cursors []byte) int
 		cursors[depth] = ch
 	}
 
-	cache[cacheKey] = result
+	seqCache[cacheKey] = result
 
 	return result
 }
