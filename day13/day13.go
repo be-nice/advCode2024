@@ -18,6 +18,28 @@ type clawMachine struct {
 func Day13(s []string) {
 	var data []clawMachine
 	var curr clawMachine
+	// re := regexp.MustCompile("\\d+")
+
+	// for _, block := range strings.Split(s, "\n\n") {
+	//	var curr clawMachine
+	//	matches := re.FindAllString(block, -1)
+	//	x, _ := strconv.Atoi(matches[0])
+	//	y, _ := strconv.Atoi(matches[1])
+	//	x1, _ := strconv.Atoi(matches[2])
+	//	y1, _ := strconv.Atoi(matches[3])
+	//	ex, _ := strconv.Atoi(matches[4])
+	//	ey, _ := strconv.Atoi(matches[5])
+
+	//	curr.btnA.x = x
+	//	curr.btnA.y = y
+	//	curr.btnB.x = x1
+	//	curr.btnB.y = y1
+	//	curr.prize.c = ex
+	//	curr.prize.d = ey
+
+	//	data = append(data, curr)
+
+	//}
 
 	for _, line := range s {
 		if strings.HasPrefix(line, "Button") {
@@ -67,7 +89,6 @@ func solve(data []clawMachine, part2 bool) int {
 		if a == float64(int(a)) && b == float64(int(b)) {
 			tokens += 3*int(a) + int(b)
 		}
-		fmt.Println(a, b)
 	}
 
 	return tokens
