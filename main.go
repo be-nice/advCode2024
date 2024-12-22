@@ -15,6 +15,7 @@ import (
 	"adv/day2"
 	"adv/day20"
 	"adv/day21"
+	"adv/day22"
 	"adv/day3"
 	"adv/day4"
 	"adv/day5"
@@ -101,6 +102,9 @@ func init() {
 		}},
 		{"Day 21 solution:", func() {
 			day21.Day21(ReadInputLnByte("./day21/input.txt"))
+		}},
+		{"Day 22 solution:", func() {
+			day22.Day22(ReadInputBlockInt("./day22/input.txt"))
 		}},
 	}
 }
@@ -211,13 +215,14 @@ func ReadInputBlockInt(dir string) []int {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	scanner.Scan()
-	dataStr := scanner.Text()
-	splitData := strings.Fields(dataStr)
+	for scanner.Scan() {
+		dataStr := scanner.Text()
+		splitData := strings.Fields(dataStr)
 
-	for _, val := range splitData {
-		num, _ := strconv.Atoi(val)
-		res = append(res, num)
+		for _, val := range splitData {
+			num, _ := strconv.Atoi(val)
+			res = append(res, num)
+		}
 	}
 
 	return res
