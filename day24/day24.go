@@ -22,7 +22,7 @@ func Day24(s []string) {
 	fmt.Println("Part 1")
 	fmt.Println(binToDec(inputs))
 	fmt.Println("Part 2")
-	fmt.Println(strings.Join(part2(inputs, gates), ","))
+	fmt.Println(strings.Join(part2(gates), ","))
 }
 
 func part1(inputs map[string]int, gates []Gate) map[string]int {
@@ -58,7 +58,7 @@ func part1(inputs map[string]int, gates []Gate) map[string]int {
 	return inputs
 }
 
-func part2(inputs map[string]int, gates []Gate) []string {
+func part2(gates []Gate) []string {
 	ops := make(map[string]Gate, len(gates))
 	revOps := make(map[Gate]string, len(gates)*2)
 
@@ -80,7 +80,7 @@ func part2(inputs map[string]int, gates []Gate) []string {
 		}
 	}
 
-	wrongGates := make(map[string]struct{}, len(gates))
+	wrongGates := make([]string, 0, 8)
 
 	for i := 1; i < top; i++ {
 		x := fmt.Sprintf("x%02d", i)
@@ -100,7 +100,7 @@ func part2(inputs map[string]int, gates []Gate) []string {
 		}
 
 		if resOp.op != "XOR" {
-			wrongGates[z] = struct{}{}
+			wrongGates = append(wrongGates, z)
 		}
 
 		carry := []string{}
@@ -115,27 +115,21 @@ func part2(inputs map[string]int, gates []Gate) []string {
 		}
 
 		if len(carry) != 1 {
-			wrongGates[xorGate] = struct{}{}
-			wrongGates[andGate] = struct{}{}
+			wrongGates = append(wrongGates, xorGate)
+			wrongGates = append(wrongGates, andGate)
 		} else {
 			carryGate := carry[0]
 			xor2Gate, xor2Exists := revOps[Gate{op: "XOR", w1: xorGate, w2: carryGate}]
 
 			if xor2Exists && xor2Gate != z {
-				wrongGates[xor2Gate] = struct{}{}
+				wrongGates = append(wrongGates, xor2Gate)
 			}
 		}
 	}
 
-	wrongGateList := make([]string, 0, len(wrongGates))
+	sort.Strings(wrongGates)
 
-	for gate := range wrongGates {
-		wrongGateList = append(wrongGateList, gate)
-	}
-
-	sort.Strings(wrongGateList)
-
-	return wrongGateList
+	return wrongGates
 }
 
 func binToDec(inputs map[string]int) int {
