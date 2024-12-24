@@ -80,28 +80,26 @@ func checkMatch(s []string, i, j int) int {
 }
 
 func part2(s []string, i, j int) int {
-	count := 0
-
 	if j < 1 || j > len(s[i])-2 {
 		return 0
 	}
 
 	if s[i-1][j+1] == 'M' && s[i-1][j-1] == 'M' && s[i+1][j-1] == 'S' && s[i+1][j+1] == 'S' {
-		count++
+		return 1
 	}
 
 	if s[i-1][j+1] == 'S' && s[i-1][j-1] == 'S' && s[i+1][j-1] == 'M' && s[i+1][j+1] == 'M' {
-		count++
+		return 1
 	}
 
 	if s[i-1][j+1] == 'S' && s[i-1][j-1] == 'M' && s[i+1][j-1] == 'M' && s[i+1][j+1] == 'S' {
-		count++
+		return 1
 	}
 
 	if s[i-1][j+1] == 'M' && s[i-1][j-1] == 'S' && s[i+1][j-1] == 'S' && s[i+1][j+1] == 'M' {
-		count++
+		return 1
 	}
-	return count
+	return 0
 }
 
 // Fun solution, but perf sucks hard
