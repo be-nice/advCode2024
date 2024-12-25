@@ -15,7 +15,7 @@ type Gate struct {
 	out string
 }
 
-func Day24(s []string) {
+func Day24(s string) {
 	inputs, gates := parse(s)
 	inputs = part1(inputs, gates)
 
@@ -29,12 +29,14 @@ func part1(inputs map[string]int, gates []Gate) map[string]int {
 	for {
 		progress := false
 		for _, gate := range gates {
+
 			if _, exists := inputs[gate.out]; exists {
 				continue
 			}
 
 			val1, ok1 := inputs[gate.w1]
 			val2, ok2 := inputs[gate.w2]
+
 			if ok1 && ok2 {
 				var res int
 				switch gate.op {
@@ -175,30 +177,28 @@ func binToDec(inputs map[string]int) int {
 	return int(res)
 }
 
-func parse(s []string) (map[string]int, []Gate) {
+func parse(s string) (map[string]int, []Gate) {
 	inputs := make(map[string]int)
 	gates := make([]Gate, 0, len(s))
 
-	for _, line := range s {
-		if line == "" {
-			continue
-		}
+	split := strings.Split(s, "\n\n")
 
+	for _, line := range strings.Split(strings.TrimSpace(split[0]), "\n") {
 		parts := strings.Split(line, ": ")
+		wire := parts[0]
+		val, _ := strconv.Atoi(parts[1])
+		inputs[wire] = val
+	}
 
-		if len(parts) == 2 {
-			wire := parts[0]
-			val, _ := strconv.Atoi(parts[1])
-			inputs[wire] = val
-		} else {
-			tokens := strings.Fields(line)
-			gates = append(gates, Gate{
-				op:  tokens[1],
-				w1:  tokens[0],
-				w2:  tokens[2],
-				out: tokens[4],
-			})
-		}
+	for _, line := range strings.Split(strings.TrimSpace(split[1]), "\n") {
+		tokens := strings.Fields(line)
+		gates = append(gates, Gate{
+			op:  tokens[1],
+			w1:  tokens[0],
+			w2:  tokens[2],
+			out: tokens[4],
+		})
+
 	}
 
 	return inputs, gates
