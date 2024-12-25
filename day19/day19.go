@@ -15,25 +15,32 @@ func Day19(s string) {
 	patterns, partials := parse(s)
 	res := 0
 	perms := 0
+	resChan := make(chan int, len(patterns))
 	var wg sync.WaitGroup
-	var mu sync.Mutex
+	var wwg sync.WaitGroup
+
+	wwg.Add(1)
+	go func() {
+		defer wwg.Done()
+		for val := range resChan {
+			if val > 0 {
+				res++
+			}
+			perms += val
+		}
+	}()
 
 	for _, line := range patterns {
 		wg.Add(1)
 		go func(line string) {
 			defer wg.Done()
-			temp := dp(partials, line)
-
-			mu.Lock()
-			if temp > 0 {
-				res++
-			}
-			perms += temp
-			mu.Unlock()
+			resChan <- dp(partials, line)
 		}(line)
 	}
 
 	wg.Wait()
+	close(resChan)
+	wwg.Wait()
 
 	fmt.Println("Part 1")
 	fmt.Println(res)
