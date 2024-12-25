@@ -6,29 +6,35 @@ import (
 	"sync"
 )
 
+const TOTALHEIGHT = 7
+
+var mu sync.Mutex
+
 func Day25(s string) {
 	keys, locks := parse(s)
-	totalHeight := 7
-	count := 0
 	lockHeights := make([][]int, 0, len(locks))
 	keyHeights := make([][]int, 0, len(keys))
 	keyChan := make(chan []int, 100)
 	lockChan := make(chan []int, 100)
-	syncChan := make(chan struct{}, 2)
+	countChan := make(chan struct{}, 5000)
 	var wg sync.WaitGroup
+	var wwg sync.WaitGroup
+	var lwg sync.WaitGroup
 
+	wwg.Add(1)
 	go func() {
+		defer wwg.Done()
 		for val := range keyChan {
 			keyHeights = append(keyHeights, val)
 		}
-		syncChan <- struct{}{}
 	}()
 
+	wwg.Add(1)
 	go func() {
+		defer wwg.Done()
 		for val := range lockChan {
 			lockHeights = append(lockHeights, val)
 		}
-		syncChan <- struct{}{}
 	}()
 
 	wg.Add(1)
@@ -42,9 +48,10 @@ func Day25(s string) {
 			}(key)
 		}
 	}()
+
 	wg.Add(1)
 	go func() {
-		wg.Done()
+		defer wg.Done()
 		for _, lock := range locks {
 			wg.Add(1)
 			go func(lock []string) {
@@ -57,25 +64,23 @@ func Day25(s string) {
 	wg.Wait()
 	close(keyChan)
 	close(lockChan)
-
-	sync := 0
-	for range syncChan {
-		sync++
-		if sync == 2 {
-			break
-		}
-	}
+	wwg.Wait()
 
 	for _, lock := range lockHeights {
-		for _, key := range keyHeights {
-			if checkFit(lock, key, totalHeight) {
-				count++
+		lwg.Add(1)
+		go func(lock []int) {
+			defer lwg.Done()
+			for _, key := range keyHeights {
+				checkFit(lock, key, countChan)
 			}
-		}
+		}(lock)
 	}
 
+	lwg.Wait()
+	close(countChan)
+
 	fmt.Println("Part 1")
-	fmt.Println(count)
+	fmt.Println(len(countChan))
 }
 
 func parse(s string) ([][]string, [][]string) {
@@ -86,16 +91,10 @@ func parse(s string) ([][]string, [][]string) {
 		lines := strings.Split(strings.TrimSpace(block), "\n")
 		lock := lines[0] == "#####"
 
-		t := make([]string, 0, len(lines))
-
-		for _, line := range lines {
-			t = append(t, line)
-		}
-
 		if lock {
-			locks = append(locks, t)
+			locks = append(locks, lines)
 		} else {
-			keys = append(keys, t)
+			keys = append(keys, lines)
 		}
 	}
 
@@ -132,12 +131,12 @@ func getHeights(schematic []string, isLock bool, send chan []int) {
 	send <- heights
 }
 
-func checkFit(lock, key []int, totalHeight int) bool {
+func checkFit(lock, key []int, countChan chan struct{}) {
 	for i := range len(lock) {
-		if lock[i]+key[i] > totalHeight {
-			return false
+		if lock[i]+key[i] > TOTALHEIGHT {
+			return
 		}
 	}
 
-	return true
+	countChan <- struct{}{}
 }
