@@ -80,7 +80,7 @@ func init() {
 			day12.Day12(ReadInputLnStr("./day12/input.txt"))
 		}},
 		{"Day 13 solution:", func() {
-			day13.Day13(ReadInputLnStr("./day13/input.txt"))
+			day13.Day13(ReadInputBlockString("./day13/input.txt"))
 		}},
 		{"Day 14 solution:", func() {
 			day14.Day14(ReadInputLnStr("./day14/input.txt"))

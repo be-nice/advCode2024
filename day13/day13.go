@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type clawMachine struct {
@@ -15,53 +16,51 @@ type clawMachine struct {
 	}
 }
 
-func Day13(s []string) {
-	var data []clawMachine
-	var curr clawMachine
-	// re := regexp.MustCompile("\\d+")
+func Day13(s string) {
+	data := make([]clawMachine, 0, len(s)>>3)
+	var wg sync.WaitGroup
+	var wwg sync.WaitGroup
+	resChan := make(chan clawMachine, len(s)>>3)
 
-	// for _, block := range strings.Split(s, "\n\n") {
-	//	var curr clawMachine
-	//	matches := re.FindAllString(block, -1)
-	//	x, _ := strconv.Atoi(matches[0])
-	//	y, _ := strconv.Atoi(matches[1])
-	//	x1, _ := strconv.Atoi(matches[2])
-	//	y1, _ := strconv.Atoi(matches[3])
-	//	ex, _ := strconv.Atoi(matches[4])
-	//	ey, _ := strconv.Atoi(matches[5])
-
-	//	curr.btnA.x = x
-	//	curr.btnA.y = y
-	//	curr.btnB.x = x1
-	//	curr.btnB.y = y1
-	//	curr.prize.c = ex
-	//	curr.prize.d = ey
-
-	//	data = append(data, curr)
-
-	//}
-
-	for _, line := range s {
-		if strings.HasPrefix(line, "Button") {
-			parts := strings.Split(line, " ")
-			label := strings.Split(parts[1], ":")[0]
-			x, _ := strconv.Atoi(parts[2][2 : len(parts[2])-1])
-			y, _ := strconv.Atoi(parts[3][2:])
-
-			if label == "A" {
-				curr.btnA = struct{ x, y int }{x, y}
-			} else {
-				curr.btnB = struct{ x, y int }{x, y}
-			}
-		} else if strings.HasPrefix(line, "Prize") {
-			parts := strings.Split(line, " ")
-			c, _ := strconv.Atoi(parts[1][2 : len(parts[1])-1])
-			d, _ := strconv.Atoi(parts[2][2:])
-			curr.prize = struct{ c, d int }{c, d}
-
-			data = append(data, curr)
+	wwg.Add(1)
+	go func() {
+		defer wwg.Done()
+		for val := range resChan {
+			data = append(data, val)
 		}
+	}()
+
+	for _, block := range strings.Split(strings.TrimSpace(s), "\n\n") {
+		wg.Add(1)
+		go func(block string) {
+			defer wg.Done()
+
+			parts := strings.Split(strings.TrimSpace(block), "\n")
+			aParts := strings.Split(parts[0], " ")
+			bParts := strings.Split(parts[1], " ")
+
+			ax, _ := strconv.Atoi(aParts[2][2 : len(aParts[2])-1])
+			ay, _ := strconv.Atoi(aParts[3][2:])
+			bx, _ := strconv.Atoi(bParts[2][2 : len(bParts[2])-1])
+			by, _ := strconv.Atoi(bParts[3][2:])
+
+			tParts := strings.Split(parts[2], " ")
+			c, _ := strconv.Atoi(tParts[1][2 : len(tParts[1])-1])
+			d, _ := strconv.Atoi(tParts[2][2:])
+
+			curr := clawMachine{
+				btnA:  struct{ x, y int }{x: ax, y: ay},
+				btnB:  struct{ x, y int }{x: bx, y: by},
+				prize: struct{ c, d int }{c: c, d: d},
+			}
+
+			resChan <- curr
+		}(block)
 	}
+
+	wg.Wait()
+	close(resChan)
+	wwg.Wait()
 
 	fmt.Println("Part 1")
 	fmt.Println(solve(data, false))
@@ -78,13 +77,13 @@ func solve(data []clawMachine, part2 bool) int {
 	}
 
 	for _, val := range data {
-		x1, y1 := val.btnA.x, val.btnA.y
-		x2, y2 := val.btnB.x, val.btnB.y
-		c := val.prize.c + add
-		d := val.prize.d + add
+		ax, ay := val.btnA.x, val.btnA.y
+		bx, by := val.btnB.x, val.btnB.y
+		tx := val.prize.c + add
+		ty := val.prize.d + add
 
-		a := float64(c*y2-d*x2) / float64(x1*y2-y1*x2)
-		b := float64(d*x1-c*y1) / float64(x1*y2-y1*x2)
+		a := float64(tx*by-ty*bx) / float64(ax*by-ay*bx)
+		b := float64(ty*ax-tx*ay) / float64(ax*by-ay*bx)
 
 		if a == float64(int(a)) && b == float64(int(b)) {
 			tokens += 3*int(a) + int(b)
